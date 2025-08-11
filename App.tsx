@@ -13,6 +13,7 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import TopUpScreen from './src/screens/TopUpScreen';
 import RedeemScreen from './src/screens/RedeemScreen';
 import BuyTokensScreen from './src/screens/BuyTokensScreen';
+import CheckoutWebView from './src/screens/CheckoutWebView';
 import TransactionHistoryScreen from './src/screens/TransactionHistoryScreen';
 import CardLoadScreen from './src/screens/CardLoadScreen';
 
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             <Stack.Screen name="TopUp" component={TopUpScreen} />
             <Stack.Screen name="Redeem" component={RedeemScreen} />
             <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
+            <Stack.Screen name="Checkout" component={CheckoutWebView} />
             <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
             <Stack.Screen name="CardLoad" component={CardLoadScreen} />
           </Stack.Navigator>
