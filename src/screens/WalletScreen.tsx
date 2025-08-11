@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Zindigi } from '../services/zindigi';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { WalletService, Currency, Balances } from '../services/WalletService';
