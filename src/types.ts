@@ -1,5 +1,6 @@
 export type AppStackParamList = {
   Home: undefined;
+  Dashboard: undefined;
   Wallet: undefined;
   SendMoney: undefined;
   Card: undefined;
