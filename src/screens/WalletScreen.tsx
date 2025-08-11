@@ -1,68 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
-// Picker is not exported by default in latest RN; but we include for demonstration purposes
 import { Picker } from '@react-native-picker/picker';
-import { useApp, Currency } from '../contexts/AppContext';
+import { WalletService, Currency, Balances } from '../services/WalletService';
 
 const WalletScreen: React.FC = () => {
-  const { balances, convertCurrency } = useApp();
+  const [balances, setBalances] = useState<Balances>({ PKR:0, SAR:0, AED:0, USD:0 });
   const [fromCurrency, setFromCurrency] = useState<Currency>('PKR');
   const [toCurrency, setToCurrency] = useState<Currency>('SAR');
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>('1000');
 
-  const handleConvert = () => {
-    if (fromCurrency === toCurrency) return;
-    convertCurrency(fromCurrency, toCurrency, amount);
+  useEffect(() => {
+    WalletService.getBalances().then(setBalances);
+  }, []);
+
+  const handleConvert = async () => {
+    try {
+      const updated = await WalletService.convert(fromCurrency, toCurrency, Number(amount || 0));
+      setBalances(updated);
+    } catch (e: any) {
+      alert(e.message || 'Conversion failed');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Wallet Balances</Text>
-      {Object.entries(balances).map(([cur, val]) => (
-        <Text key={cur} style={styles.balance}>{cur}: {val.toFixed(2)}</Text>
+      <Text style={styles.title}>Multi-Currency Wallet</Text>
+
+      {(['PKR','SAR','AED','USD'] as Currency[]).map((c)=>(
+        <Text key={c} style={styles.line}>{c}: {balances[c].toFixed(2)}</Text>
       ))}
-      <View style={styles.converter}>
-        <Text>Select currencies and amount to convert:</Text>
-        {/* NOTE: Using Picker from react-native (deprecated) for demonstration; in real RN use @react-native-picker/picker */}
-        <Picker
-          selectedValue={fromCurrency}
-          onValueChange={(itemValue) => setFromCurrency(itemValue as Currency)}
-        >
-          <Picker.Item label="PKR" value="PKR" />
-          <Picker.Item label="SAR" value="SAR" />
-          <Picker.Item label="AED" value="AED" />
-          <Picker.Item label="USD" value="USD" />
+
+      <View style={styles.row}>
+        <Picker selectedValue={fromCurrency} onValueChange={(v)=>setFromCurrency(v)}>
+          <Picker.Item label="PKR" value="PKR" /><Picker.Item label="SAR" value="SAR" />
+          <Picker.Item label="AED" value="AED" /><Picker.Item label="USD" value="USD" />
         </Picker>
-        <Picker
-          selectedValue={toCurrency}
-          onValueChange={(itemValue) => setToCurrency(itemValue as Currency)}
-        >
-          <Picker.Item label="PKR" value="PKR" />
-          <Picker.Item label="SAR" value="SAR" />
-          <Picker.Item label="AED" value="AED" />
-          <Picker.Item label="USD" value="USD" />
+        <Picker selectedValue={toCurrency} onValueChange={(v)=>setToCurrency(v)}>
+          <Picker.Item label="PKR" value="PKR" /><Picker.Item label="SAR" value="SAR" />
+          <Picker.Item label="AED" value="AED" /><Picker.Item label="USD" value="USD" />
         </Picker>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {/* Use TextInput from react-native instead of HTML input for mobile */}
-          <TextInput
-            keyboardType="numeric"
-            value={amount.toString()}
-            onChangeText={(text) => setAmount(Number(text) || 0)}
-            style={{ borderWidth: 1, padding: 8, marginRight: 8, minWidth: 100 }}
-            placeholder="Amount"
-          />
-          <Button title="Convert" onPress={handleConvert} />
-        </View>
       </View>
+
+      <TextInput value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.input} placeholder="Amount" />
+      <Button title="Convert" onPress={handleConvert} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 20, marginBottom: 10 },
-  balance: { fontSize: 16, marginVertical: 4 },
-  converter: { marginTop: 20 },
+  container:{flex:1,padding:20,gap:12},
+  title:{fontSize:22,fontWeight:'600'},
+  row:{flexDirection:'row',gap:12,alignItems:'center'},
+  input:{borderWidth:1,borderColor:'#ccc',padding:10,borderRadius:8,marginVertical:8},
+  line:{fontSize:16}
 });
 
 export default WalletScreen;
