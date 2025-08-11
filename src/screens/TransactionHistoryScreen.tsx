@@ -1,55 +1,75 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
+import { TransactionService, TxItem } from '../services/TransactionService';
 
-interface Transaction {
-  id: string;
-  description: string;
-  amount: number;
-  currency: string;
-  date: string;
-}
-
-const mockHistory: Transaction[] = [
-  { id: 't1', description: 'Top Up', amount: 10000, currency: 'PKR', date: '2025-07-01' },
-  { id: 't2', description: 'Send to family', amount: -5000, currency: 'PKR', date: '2025-07-05' },
-  { id: 't3', description: 'Umrah Redeem', amount: -2000, currency: 'PKR', date: '2025-07-10' },
-];
+const label: Record<TxItem['kind'], string> = {
+  topup: 'Top Up',
+  send: 'Send to Family',
+  convert: 'FX Convert',
+  redeem: 'Redeem',
+  card_load: 'Card Load',
+  buy: 'Buy Credits',
+};
 
 const TransactionHistoryScreen: React.FC = () => {
+  const [items, setItems] = useState<TxItem[]>([]);
+
+  const load = async () => setItems(await TransactionService.list());
+  useEffect(() => { load(); }, []);
+
+  const clear = async () => {
+    await TransactionService.clear();
+    await load();
+  };
+
+  const render = ({ item }: { item: TxItem }) => {
+    const subtitle = (() => {
+      if (item.kind === 'convert') {
+        return `→ ${item.meta?.toCurrency} @ ${item.meta?.rate}`;
+      }
+      if (item.kind === 'send') {
+        return `→ ${item.meta?.recipient}`;
+      }
+      return '';
+    })();
+
+    return (
+      <View style={styles.row}>
+        <View>
+          <Text style={styles.kind}>{label[item.kind]}</Text>
+          <Text style={styles.meta}>{subtitle}</Text>
+        </View>
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text style={styles.amount}>{item.amount.toLocaleString()} {item.currency}</Text>
+          <Text style={styles.date}>{new Date(item.at).toLocaleString()}</Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Transaction History</Text>
+      <Text style={styles.title}>Transactions</Text>
+      <Button title="Refresh" onPress={load} />
       <FlatList
-        data={mockHistory}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <View>
-              <Text>{item.description}</Text>
-              <Text style={styles.date}>{item.date}</Text>
-            </View>
-            <Text style={{ color: item.amount >= 0 ? 'green' : 'red' }}>
-              {item.amount >= 0 ? '+' : ''}{item.amount} {item.currency}
-            </Text>
-          </View>
-        )}
+        style={{ marginTop: 8 }}
+        data={items}
+        keyExtractor={(i) => i.id}
+        renderItem={render}
       />
+      <Button title="Clear (dev)" onPress={clear} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 20, marginBottom: 10 },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-  },
-  date: { fontSize: 12, color: '#777' },
+  container:{ flex:1, padding:20 },
+  title:{ fontSize:22, fontWeight:'600', marginBottom:6 },
+  row:{ flexDirection:'row', justifyContent:'space-between', borderBottomWidth:1, borderBottomColor:'#eee', paddingVertical:10 },
+  kind:{ fontSize:16, fontWeight:'600' },
+  meta:{ color:'#666' },
+  amount:{ fontWeight:'600' },
+  date:{ color:'#888', fontSize:12 },
 });
 
 export default TransactionHistoryScreen;
