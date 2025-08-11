@@ -10,7 +10,7 @@ const SendMoneyScreen: React.FC = () => {
 
   const handleSend = async () => {
     try {
-      await WalletService.sendToFamily(currency, Number(amount || 0));
+      await WalletService.sendToFamily(currency, Number(amount || 0), recipient);
       alert(`Sent ${amount} ${currency} to ${recipient}`);
     } catch (e: any) {
       alert(e.message || 'Send failed');
