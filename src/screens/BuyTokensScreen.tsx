@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { WalletService } from '../services/WalletService';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../types';
 
-interface TokenPackage { id: string; tokens: number; price: number; }
+type Nav = NativeStackNavigationProp<AppStackParamList, 'BuyTokens'>;
+
+interface TokenPackage { id: string; tokens: number; price: number; creditPkr: number; }
 const packages: TokenPackage[] = [
-  { id: 'p1', tokens: 100, price: 10 },
-  { id: 'p2', tokens: 500, price: 45 },
-  { id: 'p3', tokens: 1000, price: 80 },
+  { id: 'p1', tokens: 100,  price: 10, creditPkr: 2500 },
+  { id: 'p2', tokens: 500,  price: 45, creditPkr: 12000 },
+  { id: 'p3', tokens: 1000, price: 80, creditPkr: 22000 },
 ];
 
-const BuyTokensScreen: React.FC = () => {
+const BuyTokensScreen: React.FC<{ navigation: Nav }> = ({ navigation }) => {
   const [selected, setSelected] = useState<string>('p1');
-
   const pkg = packages.find(p => p.id === selected)!;
 
-  const handleContinue = async () => {
-    // later: open WebView to PayPal/Stripe; on success call WalletService.topUpPKR(amountInPKR)
-    await WalletService.addPoints(Math.floor(pkg.price / 5)); // small reward on purchase
-    alert(`Stub: Begin checkout for ${pkg.tokens} credits @ $${pkg.price}`);
+  const handleContinue = () => {
+    navigation.navigate('Checkout', { tokens: pkg.tokens, price: pkg.price, creditPkr: pkg.creditPkr });
   };
 
   return (
@@ -31,12 +31,12 @@ const BuyTokensScreen: React.FC = () => {
           <TouchableOpacity onPress={() => setSelected(item.id)} style={[styles.card, selected === item.id && styles.cardActive]}>
             <Text style={styles.name}>{item.tokens} Credits</Text>
             <Text style={styles.price}>${item.price}</Text>
+            <Text style={styles.note}>Will credit ≈ {item.creditPkr.toLocaleString()} PKR</Text>
           </TouchableOpacity>
         )}
       />
 
       <Button title={`Continue ($${pkg.price})`} onPress={handleContinue} />
-      <Text style={styles.note}>Later: replace with WebView or native SDK checkout flow.</Text>
     </View>
   );
 };
@@ -48,8 +48,7 @@ const styles = StyleSheet.create({
   cardActive:{ borderColor:'#4a67ff' },
   name:{ fontSize:16, fontWeight:'600' },
   price:{ marginTop:6 },
-  note:{ marginTop:10, color:'#666' },
+  note:{ marginTop:4, color:'#666' },
 });
 
 export default BuyTokensScreen;
-
