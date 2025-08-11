@@ -6,4 +6,9 @@ export type AppStackParamList = {
   HajjGoals: undefined;
   Rewards: undefined;
   Settings: undefined;
+  TopUp: undefined;
+  Redeem: undefined;
+  BuyTokens: undefined;
+  TransactionHistory: undefined;
+  CardLoad: undefined;
 };
