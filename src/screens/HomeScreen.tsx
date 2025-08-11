@@ -17,6 +17,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <Button title="Hajj Goals" onPress={() => navigation.navigate('HajjGoals')} />
       <Button title="Rewards" onPress={() => navigation.navigate('Rewards')} />
       <Button title="Settings" onPress={() => navigation.navigate('Settings')} />
+      <Button title="Top Up" onPress={() => navigation.navigate('TopUp')} />
+      <Button title="Redeem" onPress={() => navigation.navigate('Redeem')} />
+      <Button title="Buy Tokens" onPress={() => navigation.navigate('BuyTokens')} />
+      <Button title="Transactions" onPress={() => navigation.navigate('TransactionHistory')} />
+      <Button title="Card Load" onPress={() => navigation.navigate('CardLoad')} />
     </View>
   );
 };
