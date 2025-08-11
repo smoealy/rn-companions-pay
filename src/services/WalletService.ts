@@ -1,5 +1,5 @@
-// WalletService now delegates to Zindigi stubs so it’s easy to switch to real APIs
 import { Zindigi, ZBalance, ZTransferRequest, Currency } from './zindigi';
+import { TransactionService } from './TransactionService';
 
 export type Balances = Record<Currency, number>;
 
@@ -21,9 +21,9 @@ export const WalletService = {
   async addPoints(n: number) { POINTS += n; },
 
   async convert(from: Currency, to: Currency, amount: number): Promise<Balances> {
-    // (stub) just request a quote and assume success => update via getBalances
-    await Zindigi.getQuote(from, to);
-    // In real impl: call Zindigi FX-convert endpoint, then fetch balances
+    const q = await Zindigi.getQuote(from, to);
+    // TODO: call real convert; for now just assume success and refresh
+    await TransactionService.add({ kind: 'convert', amount, currency: from, meta: { toCurrency: to, rate: q.rate } });
     return this.getBalances();
   },
 
@@ -34,13 +34,13 @@ export const WalletService = {
       recipient: { type: 'mobile', value: recipientMobile },
     };
     await Zindigi.send(req);
+    await TransactionService.add({ kind: 'send', amount, currency, meta: { recipient: recipientMobile } });
     POINTS += Math.floor(amount / 1000);
   },
 
   async topUpPKR(amount: number): Promise<void> {
-    // In real impl: call processor → on success, credit PKR via Zindigi
-    // For now, no-op then rely on future getBalances from Zindigi to reflect change
+    // In real flow: payment success → credit via Zindigi → refresh
+    await TransactionService.add({ kind: 'topup', amount, currency: 'PKR' });
     POINTS += Math.floor(amount / 500);
   },
 };
-
