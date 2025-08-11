@@ -12,4 +12,6 @@ export type AppStackParamList = {
   BuyTokens: undefined;
   TransactionHistory: undefined;
   CardLoad: undefined;
+  Checkout: { tokens: number; price: number; creditPkr: number };
+
 };
