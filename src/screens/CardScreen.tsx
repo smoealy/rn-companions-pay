@@ -1,37 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
+import { Zindigi, ZCard } from '../services/zindigi';
 
-interface Transaction {
-  id: string;
-  description: string;
-  amount: number;
-  currency: string;
-}
+interface Txn { id: string; description: string; amount: number; currency: string; }
 
-const mockTransactions: Transaction[] = [
+const mockTransactions: Txn[] = [
   { id: '1', description: 'Grocery Store', amount: -5000, currency: 'PKR' },
   { id: '2', description: 'Pharmacy', amount: -2300, currency: 'PKR' },
-  { id: '3', description: 'Top-up from wallet', amount: 10000, currency: 'PKR' },
+  { id: '3', description: 'Mobile Top-up', amount: -1000, currency: 'PKR' },
 ];
 
 const CardScreen: React.FC = () => {
-  const [frozen, setFrozen] = useState(false);
+  const [card, setCard] = useState<ZCard | null>(null);
+
+  useEffect(() => { Zindigi.getCard().then(setCard); }, []);
+
+  const toggle = async () => {
+    if (!card) return;
+    const next = await Zindigi.setCardStatus(card.status === 'active' ? 'frozen' : 'active');
+    setCard(next);
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Debit Card</Text>
-      <View style={styles.cardBox}>
-        <Text style={styles.cardNumber}>1234 5678 9012 3456</Text>
-        <Text style={styles.cardInfo}>Expiry: 12/27</Text>
-        <Text style={styles.cardInfo}>CVV: ***</Text>
-      </View>
-      <Button title={frozen ? 'Unfreeze Card' : 'Freeze Card'} onPress={() => setFrozen(!frozen)} />
-      <Text style={styles.subtitle}>Recent Transactions</Text>
+      <Text style={styles.title}>Companions × Zindigi Card</Text>
+      {card && (
+        <View style={styles.cardBox}>
+          <Text>•••• •••• •••• {card.last4}</Text>
+          <Text>Status: {card.status}</Text>
+          <Button title={card.status === 'active' ? 'Freeze Card' : 'Unfreeze Card'} onPress={toggle} />
+        </View>
+      )}
+
+      <Text style={{ marginTop: 12, fontWeight:'600' }}>Recent Transactions</Text>
       <FlatList
         data={mockTransactions}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(i) => i.id}
         renderItem={({ item }) => (
-          <View style={styles.transactionItem}>
+          <View style={styles.txn}>
             <Text>{item.description}</Text>
             <Text>{item.amount} {item.currency}</Text>
           </View>
@@ -42,24 +48,10 @@ const CardScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 20, marginBottom: 10 },
-  cardBox: {
-    padding: 20,
-    borderRadius: 8,
-    backgroundColor: '#f1f1f1',
-    marginBottom: 10,
-  },
-  cardNumber: { fontSize: 24, letterSpacing: 2, marginBottom: 5 },
-  cardInfo: { fontSize: 16 },
-  subtitle: { fontSize: 18, marginTop: 20, marginBottom: 10 },
-  transactionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-  },
+  container:{ flex:1, padding:20, gap:12 },
+  title:{ fontSize:22, fontWeight:'600' },
+  cardBox:{ borderWidth:1, borderColor:'#ddd', padding:12, borderRadius:10, gap:6 },
+  txn:{ flexDirection:'row', justifyContent:'space-between', borderBottomWidth:1, borderBottomColor:'#eee', paddingVertical:8 },
 });
 
 export default CardScreen;
