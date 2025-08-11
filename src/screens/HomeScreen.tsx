@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Flags } from '../services/Flags';
 import { AppStackParamList } from '../types';
 
-type HomeScreenProps = { navigation: NativeStackNavigationProp<AppStackParamList, 'Home'>; };
+type HomeScreenProps = { navigation: NativeStackNavigationProp<AppStackParamList, 'Home'> };
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const [web3, setWeb3] = useState(false);
+
+  useEffect(() => {
+    Flags.getWeb3().then(setWeb3);
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Companions Pay</Text>
@@ -17,6 +24,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <Button title="Hajj Goals" onPress={() => navigation.navigate('HajjGoals')} />
       <Button title="Card" onPress={() => navigation.navigate('Card')} />
       <Button title="Settings" onPress={() => navigation.navigate('Settings')} />
+
+      {web3 && (
+        <>
+          <Button title="Connect Wallet" onPress={() => navigation.navigate('Web3Connect')} />
+          <Button title="Token Balance" onPress={() => navigation.navigate('Web3Token')} />
+          <Button title="Send Token" onPress={() => navigation.navigate('Web3Transfer')} />
+        </>
+      )}
     </View>
   );
 };
