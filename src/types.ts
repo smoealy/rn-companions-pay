@@ -12,6 +12,9 @@ export type AppStackParamList = {
   BuyTokens: undefined;
   TransactionHistory: undefined;
   CardLoad: undefined;
+  Web3Connect: undefined;
+  Web3Token: undefined;
+  Web3Transfer: undefined;
   Checkout: { tokens: number; price: number; creditPkr: number };
 
 };
