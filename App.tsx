@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from './src/screens/HomeScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
 import WalletScreen from './src/screens/WalletScreen';
 import SendMoneyScreen from './src/screens/SendMoneyScreen';
 import CardScreen from './src/screens/CardScreen';
@@ -28,6 +29,7 @@ const App: React.FC = () => {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Dashboard" component={DashboardScreen} />
             <Stack.Screen name="Wallet" component={WalletScreen} />
             <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
             <Stack.Screen name="Card" component={CardScreen} />
