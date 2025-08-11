@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { Flags } from '../services/Flags';
 import { TransactionService } from '../services/TransactionService';
+import { Flags } from '../services/Flags';
 import { HajjService } from '../services/HajjService';
 
 const SettingsScreen: React.FC = () => {
   const [env, setEnv] = useState<'pilot' | 'production'>('pilot');
+const [web3, setWeb3] = useState(false);
 
   useEffect(() => {
     Flags.getEnv().then(setEnv);
+    Flags.getWeb3().then(setWeb3);
   }, []);
 
   const toggleEnv = async () => {
@@ -26,7 +29,15 @@ const SettingsScreen: React.FC = () => {
     alert('Local data cleared (transactions & goals).');
   };
 
+  
   return (
+   
+    <View style={styles.card}>
+  <Text style={styles.label}>Web3 (optional)</Text>
+  <Text>Enabled: {String(web3)}</Text>
+  <Button title={web3 ? 'Disable Web3' : 'Enable Web3'} onPress={async () => setWeb3(await Flags.setWeb3(!web3))} />
+</View>
+    
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
 
