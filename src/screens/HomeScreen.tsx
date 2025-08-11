@@ -10,6 +10,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Companions Pay</Text>
       <Button title="Wallet" onPress={() => navigation.navigate('Wallet')} />
+      <Button title="Open Dashboard" onPress={() => navigation.navigate('Dashboard')} />
       <Button title="Send Money" onPress={() => navigation.navigate('SendMoney')} />
       <Button title="Top Up" onPress={() => navigation.navigate('TopUp')} />
       <Button title="Rewards" onPress={() => navigation.navigate('Rewards')} />
