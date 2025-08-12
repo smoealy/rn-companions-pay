@@ -1,7 +1,9 @@
 // Ensure native modules are initialized even if Snack boots App.tsx directly
 import 'react-native-gesture-handler';
 import { enableScreens } from 'react-native-screens';
-enableScreens(true);
+// Allow disabling native screens during development to troubleshoot crashes
+const useNativeScreens = process.env.EXPO_PUBLIC_USE_NATIVE_SCREENS !== 'false';
+enableScreens(useNativeScreens);
 
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
