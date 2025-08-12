@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
 import { WalletService, Balances } from '../services/WalletService';
 import { TransactionService, TxItem } from '../services/TransactionService';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { AppStackParamList } from '../types';
 
-type Props = { navigation: NativeStackNavigationProp<AppStackParamList, 'Dashboard'> };
+type Props = { navigation: StackNavigationProp<AppStackParamList, 'Dashboard'> };
 
 const DashboardScreen: React.FC<Props> = ({ navigation }) => {
-  const [balances, setBalances] = useState<Balances>({ PKR:0,SAR:0,AED:0,USD:0 });
+  const [balances, setBalances] = useState<Balances>({ PKR: 0, SAR: 0, AED: 0, USD: 0 });
   const [points, setPoints] = useState(0);
   const [tx, setTx] = useState<TxItem[]>([]);
 
@@ -58,12 +58,13 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container:{ flex:1, padding:20, gap:12 },
-  title:{ fontSize:22, fontWeight:'600' },
-  card:{ borderWidth:1, borderColor:'#ddd', padding:12, borderRadius:10, gap:6 },
-  label:{ fontWeight:'600' },
-  value:{ fontSize:20, fontWeight:'700' },
-  row:{ flexDirection:'row', justifyContent:'space-between', paddingVertical:6, borderBottomWidth:1, borderBottomColor:'#eee' },
+  container: { flex: 1, padding: 20, gap: 12 },
+  title: { fontSize: 22, fontWeight: '600' },
+  card: { borderWidth: 1, borderColor: '#ddd', padding: 12, borderRadius: 10, gap: 6 },
+  label: { fontWeight: '600' },
+  value: { fontSize: 20, fontWeight: '700' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#eee' },
 });
 
 export default DashboardScreen;
+
