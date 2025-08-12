@@ -4,6 +4,7 @@ import { enableScreens } from 'react-native-screens';
 enableScreens(true);
 
 import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,17 +18,17 @@ import TopUpScreen from './src/screens/TopUpScreen';
 import BuyTokensScreen from './src/screens/BuyTokensScreen';
 import CheckoutWebView from './src/screens/CheckoutWebView';
 import TransactionHistoryScreen from './src/screens/TransactionHistoryScreen';
-import Web3ConnectScreen from './src/screens/Web3ConnectScreen';
 import Web3TokenScreen from './src/screens/Web3TokenScreen';
 import Web3TransferScreen from './src/screens/Web3TransferScreen';
 import CardLoadScreen from './src/screens/CardLoadScreen';
 
 // Providers & types
 import { AppProvider } from './src/contexts/AppContext';
-import { AuthProvider } from './src/contexts/AuthContext';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { AppStackParamList } from './src/types';
-import { OnboardingStack } from './src/navigation/OnboardingStack';
-import { useAuth } from './src/contexts/AuthContext';
+
+// ✅ Default export (no props)
+import OnboardingStack from './src/navigation/OnboardingStack';
 
 const Stack = createStackNavigator<AppStackParamList>();
 
@@ -39,7 +40,7 @@ const AppStackNavigator = () => (
     <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
     <Stack.Screen name="Checkout" component={CheckoutWebView} />
     <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
-    <Stack.Screen name="Web3Connect" component={Web3ConnectScreen} />
+    {/* Web3 screens that are part of the main app (token view/transfer) */}
     <Stack.Screen name="Web3Token" component={Web3TokenScreen} />
     <Stack.Screen name="Web3Transfer" component={Web3TransferScreen} />
     <Stack.Screen name="CardLoad" component={CardLoadScreen} />
@@ -47,23 +48,34 @@ const AppStackNavigator = () => (
 );
 
 const RootNavigator: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth(); // user is optional now (stubbed if Firebase off)
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const check = async () => {
-      const profile = await AsyncStorage.getItem('userProfile');
-      setOnboarded(!!profile);
-    };
-    check();
-  }, [user]);
+    (async () => {
+      try {
+        // Prefer explicit flag; fall back to legacy profile check
+        const flag = await AsyncStorage.getItem('onboarded');
+        if (flag === '1') return setOnboarded(true);
+        const legacyProfile = await AsyncStorage.getItem('userProfile');
+        setOnboarded(!!legacyProfile);
+      } catch {
+        setOnboarded(false);
+      }
+    })();
+  }, []);
 
-  if (loading || onboarded === null) return null;
-
-  if (!user || !onboarded) {
-    return <OnboardingStack onFinish={() => setOnboarded(true)} />;
+  if (loading || onboarded === null) {
+    // simple splash to avoid a flash
+    return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
   }
 
+  // Not onboarded yet → show onboarding flow (Welcome → … → Web3Connect)
+  if (!onboarded) {
+    return <OnboardingStack />;
+  }
+
+  // Onboarded → main app
   return <AppStackNavigator />;
 };
 
@@ -78,4 +90,3 @@ const App: React.FC = () => (
 );
 
 export default App;
-
