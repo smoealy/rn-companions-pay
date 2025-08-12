@@ -4,9 +4,12 @@
     "slug": "rn-companions-pay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon":  null,
     "scheme": "companionspay",
-    "splash": { "resizeMode": "contain", "backgroundColor": "#ffffff" }
+    "icon": null,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "assetBundlePatterns": ["**/*"],
     "android": { "package": "com.companions.pay" },
     "ios": { "bundleIdentifier": "com.companions.pay" }
