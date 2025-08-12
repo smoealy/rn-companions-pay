@@ -39,7 +39,7 @@
   "metro-runtime": "0.79.1",
   "metro-resolver": "0.79.1",
   "metro-source-map": "0.79.1"
-}
+    
     "react-native": "0.76.6",
     "@react-native/virtualized-lists": "0.76.6"
   }
