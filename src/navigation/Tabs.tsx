@@ -1,7 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useContext } from 'react';
+import {
+  SafeAreaInsetsContext,
+  type EdgeInsets,
+} from 'react-native-safe-area-context';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import WalletScreen from '../screens/WalletScreen';
@@ -16,7 +20,13 @@ import type { TabParamList } from '../types';
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const Tabs: React.FC = () => {
-  const insets = useSafeAreaInsets();
+  // useSafeAreaInsets throws if no provider is found. Instead, read the context
+  // directly and fall back to zero insets so the app doesn't crash on startup
+  // (which was reported as a "non-std C++ exception" on iOS when running
+  // before the provider mounted).
+  const insets =
+    useContext(SafeAreaInsetsContext) ?? ({} as EdgeInsets);
+  const bottom = insets.bottom ?? 0;
 
   return (
     <Tab.Navigator
@@ -28,8 +38,8 @@ const Tabs: React.FC = () => {
           backgroundColor: '#FFFFFF',
           borderTopColor: '#E5E7EB',
           borderTopWidth: 1,
-          height: 56 + insets.bottom,
-          paddingBottom: Math.max(insets.bottom, 8),
+          height: 56 + bottom,
+          paddingBottom: Math.max(bottom, 8),
           paddingTop: 8,
         },
         tabBarHideOnKeyboard: true,
