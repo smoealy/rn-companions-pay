@@ -27,11 +27,12 @@
     "react-native-screens": "~4.11.1",
     "react-native-webview": "13.12.5",
 
-    "firebase": "8.10.0"
+    "firebase": "^9.22.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.23",
     "@types/react-native": "^0.73.0",
+    "@types/node": "^24.2.1",
     "typescript": "^5.5.0"
   }
 }

@@ -14,6 +14,7 @@
     "android": { "package": "com.companions.pay" },
     "ios": { "bundleIdentifier": "com.companions.pay" },
     "extra": {
+      "EXPO_PUBLIC_USE_FIREBASE": "false",
       "EXPO_PUBLIC_FB_API_KEY": "",
       "EXPO_PUBLIC_FB_AUTH_DOMAIN": "",
       "EXPO_PUBLIC_FB_PROJECT_ID": "",

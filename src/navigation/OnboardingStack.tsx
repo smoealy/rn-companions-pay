@@ -21,7 +21,7 @@ export type OnboardingStackParamList = {
 
 const Stack = createStackNavigator<OnboardingStackParamList>();
 
-export const OnboardingStack: React.FC<{ onFinish: () => void }> = ({ onFinish }) => (
+const OnboardingStack: React.FC = () => (
   <OnboardingProvider>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -30,9 +30,9 @@ export const OnboardingStack: React.FC<{ onFinish: () => void }> = ({ onFinish }
       <Stack.Screen name="GoalBasics" component={GoalBasicsScreen} />
       <Stack.Screen name="InviteFamily" component={InviteFamilyScreen} />
       <Stack.Screen name="Web3Toggle" component={Web3ToggleScreen} />
-      <Stack.Screen name="Finish">
-        {(props) => <FinishScreen {...props} onFinish={onFinish} />}
-      </Stack.Screen>
+      <Stack.Screen name="Finish" component={FinishScreen} />
     </Stack.Navigator>
   </OnboardingProvider>
 );
+
+export default OnboardingStack;

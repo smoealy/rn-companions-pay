@@ -4,12 +4,14 @@ import { enableScreens } from 'react-native-screens';
 enableScreens(true);
 
 import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Tabs
+// Tabs & Onboarding
 import Tabs from './src/navigation/Tabs';
+import OnboardingStack from './src/navigation/OnboardingStack';
 
 // Overlay/flow screens (push on top of tabs)
 import SendMoneyScreen from './src/screens/SendMoneyScreen';
@@ -22,60 +24,58 @@ import Web3TokenScreen from './src/screens/Web3TokenScreen';
 import Web3TransferScreen from './src/screens/Web3TransferScreen';
 import CardLoadScreen from './src/screens/CardLoadScreen';
 
-// Providers & types
+// Providers
 import { AppProvider } from './src/contexts/AppContext';
 import { AuthProvider } from './src/contexts/AuthContext';
-import { AppStackParamList } from './src/types';
-import { OnboardingStack } from './src/navigation/OnboardingStack';
-import { useAuth } from './src/contexts/AuthContext';
 
-const Stack = createStackNavigator<AppStackParamList>();
+const Stack = createStackNavigator();
 
-const AppStackNavigator = () => (
-  <Stack.Navigator initialRouteName="Home" screenOptions={{ headerTitle: 'Companions Pay' }}>
-    <Stack.Screen name="Home" component={Tabs} options={{ headerShown: false }} />
-    <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
-    <Stack.Screen name="TopUp" component={TopUpScreen} />
-    <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
-    <Stack.Screen name="Checkout" component={CheckoutWebView} />
-    <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
-    <Stack.Screen name="Web3Connect" component={Web3ConnectScreen} />
-    <Stack.Screen name="Web3Token" component={Web3TokenScreen} />
-    <Stack.Screen name="Web3Transfer" component={Web3TransferScreen} />
-    <Stack.Screen name="CardLoad" component={CardLoadScreen} />
-  </Stack.Navigator>
-);
-
-const RootNavigator: React.FC = () => {
-  const { user, loading } = useAuth();
-  const [onboarded, setOnboarded] = useState<boolean | null>(null);
+const App: React.FC = () => {
+  const [ready, setReady] = useState(false);
+  const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const check = async () => {
-      const profile = await AsyncStorage.getItem('userProfile');
-      setOnboarded(!!profile);
-    };
-    check();
-  }, [user]);
+    (async () => {
+      try {
+        const flag = await AsyncStorage.getItem('onboarded');
+        setIsOnboarded(flag === '1');
+      } finally {
+        setReady(true);
+      }
+    })();
+  }, []);
 
-  if (loading || onboarded === null) return null;
+  if (!ready) return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
 
-  if (!user || !onboarded) {
-    return <OnboardingStack onFinish={() => setOnboarded(true)} />;
-  }
+  return (
+    <AppProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerTitle: 'Companions Pay' }}>
+            {isOnboarded ? (
+              // Main app: Tabs mounted under "Home"
+              <Stack.Screen name="Home" component={Tabs} options={{ headerShown: false }} />
+            ) : (
+              // Onboarding flow as its own navigator
+              <Stack.Screen name="Onboarding" component={OnboardingStack} options={{ headerShown: false }} />
+            )}
 
-  return <AppStackNavigator />;
+            {/* Full-screen flows on top of Tabs */}
+            <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
+            <Stack.Screen name="TopUp" component={TopUpScreen} />
+            <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
+            <Stack.Screen name="Checkout" component={CheckoutWebView} />
+            <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
+            <Stack.Screen name="Web3Connect" component={Web3ConnectScreen} />
+            <Stack.Screen name="Web3Token" component={Web3TokenScreen} />
+            <Stack.Screen name="Web3Transfer" component={Web3TransferScreen} />
+            <Stack.Screen name="CardLoad" component={CardLoadScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AuthProvider>
+    </AppProvider>
+  );
 };
-
-const App: React.FC = () => (
-  <AppProvider>
-    <AuthProvider>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </AuthProvider>
-  </AppProvider>
-);
 
 export default App;
 

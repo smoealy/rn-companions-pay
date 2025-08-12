@@ -6,9 +6,9 @@ import { useOnboarding } from '../../contexts/OnboardingContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { db, doc, setDoc } from '../../services/firebase';
 
-type Props = { onFinish?: () => void } & Record<string, any>;
+type Props = Record<string, any>;
 
-const FinishScreen: React.FC<Props> = ({ onFinish }) => {
+const FinishScreen: React.FC<Props> = ({ navigation }) => {
   const { profile } = useOnboarding();
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
@@ -29,7 +29,8 @@ const FinishScreen: React.FC<Props> = ({ onFinish }) => {
         await setDoc(doc(userRef, 'goals', 'first'), goal, { merge: true });
       }
 
-      onFinish?.();
+      await AsyncStorage.setItem('onboarded', '1');
+      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     } catch (e) {
       console.warn('Finish onboarding failed:', e);
       Alert.alert('Oops', 'We could not finish onboarding. Please try again.');
