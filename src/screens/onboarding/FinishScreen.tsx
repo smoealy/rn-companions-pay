@@ -3,6 +3,7 @@ import { Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { CommonActions } from '@react-navigation/native';
 import { AppStackParamList } from '../../types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -32,14 +33,21 @@ const FinishScreen: React.FC<Props> = ({ navigation, onFinish }) => {
         await setDoc(doc(userRef, 'goals', 'first'), goal, { merge: true });
       }
 
-      // Prefer navigator reset to land on Tabs cleanly
-      if (navigation?.reset) {
-        navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-      } else if (navigation?.replace) {
-        navigation.replace('Home');
-      }
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Home',
+              state: {
+                index: 0,
+                routes: [{ name: 'Dashboard' }],
+              } as any,
+            },
+          ],
+        })
+      );
 
-      // Still call optional prop if you’re using a wizard wrapper
       onFinish?.();
     } catch (e) {
       console.warn('Finish onboarding failed:', e);
