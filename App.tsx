@@ -5,20 +5,14 @@ enableScreens(true);
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-// ✅ Use JS stack (not native stack) to avoid PlatformConstants error on device
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Screens (use ./src/... paths)
-import HomeScreen from './src/screens/HomeScreen';
-import DashboardScreen from './src/screens/DashboardScreen';
-import WalletScreen from './src/screens/WalletScreen';
+// Tabs
+import Tabs from './src/navigation/Tabs';
+
+// Overlay/flow screens (push on top of tabs)
 import SendMoneyScreen from './src/screens/SendMoneyScreen';
-import CardScreen from './src/screens/CardScreen';
-import HajjGoalsScreen from './src/screens/HajjGoalsScreen';
-import RewardsScreen from './src/screens/RewardsScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
 import TopUpScreen from './src/screens/TopUpScreen';
-import RedeemScreen from './src/screens/RedeemScreen';
 import BuyTokensScreen from './src/screens/BuyTokensScreen';
 import CheckoutWebView from './src/screens/CheckoutWebView';
 import TransactionHistoryScreen from './src/screens/TransactionHistoryScreen';
@@ -43,16 +37,16 @@ const App: React.FC = () => {
             initialRouteName="Home"
             screenOptions={{ headerTitle: 'Companions Pay' }}
           >
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Dashboard" component={DashboardScreen} />
-            <Stack.Screen name="Wallet" component={WalletScreen} />
+            {/* Home mounts the bottom tabs */}
+            <Stack.Screen
+              name="Home"
+              component={Tabs}
+              options={{ headerShown: false }}
+            />
+
+            {/* Full-screen flows that appear over the tabs */}
             <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
-            <Stack.Screen name="Card" component={CardScreen} />
-            <Stack.Screen name="HajjGoals" component={HajjGoalsScreen} />
-            <Stack.Screen name="Rewards" component={RewardsScreen} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="TopUp" component={TopUpScreen} />
-            <Stack.Screen name="Redeem" component={RedeemScreen} />
             <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
             <Stack.Screen name="Checkout" component={CheckoutWebView} />
             <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
@@ -68,3 +62,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
