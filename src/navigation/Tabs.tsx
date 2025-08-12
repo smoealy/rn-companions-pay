@@ -1,28 +1,38 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import WalletScreen from '../screens/WalletScreen';
 import HajjGoalsScreen from '../screens/HajjGoalsScreen';
 import RewardsScreen from '../screens/RewardsScreen';
 import CardScreen from '../screens/CardScreen';
-import ImpactScreen from '../screens/ImpactScreen'; // will add next
+import ImpactScreen from '../screens/ImpactScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
 const Tabs: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Tab.Navigator
+    <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#0E6B5B',
         tabBarInactiveTintColor: '#8AA39B',
+        tabBarStyle: {
+          backgroundColor: '#FFFFFF',
+          borderTopColor: '#E5E7EB',
+          borderTopWidth: 1,
+          height: 56 + insets.bottom,          // include bottom inset
+          paddingBottom: Math.max(insets.bottom, 8), // avoid white strip
+          paddingTop: 8,
+        },
+        tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size }) => {
-          const icons: Record<string, keyof typeof Ionicons.glyphMap> = {
+          const map: Record<string, keyof typeof Ionicons.glyphMap> = {
             Dashboard: 'home',
             Wallet: 'wallet',
             Goals: 'flag',
@@ -31,10 +41,11 @@ const Tabs: React.FC = () => {
             Card: 'card',
             Settings: 'settings',
           };
-          const name = icons[route.name] || 'ellipse';
+          const name = map[route.name] ?? 'ellipse';
           return <Ionicons name={name} size={size} color={color} />;
         },
       })}
+      sceneContainerStyle={{ backgroundColor: '#F7F8FA' }} // match app bg
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Wallet" component={WalletScreen} />
@@ -44,8 +55,8 @@ const Tabs: React.FC = () => {
       <Tab.Screen name="Card" component={CardScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
-    </SafeAreaView>
   );
 };
 
 export default Tabs;
+
