@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
+  auth,
   onAuthStateChanged,
-  signInAnonymously as fbSignInAnonymously,
   signOut as fbSignOut,
-  User,
-} from 'firebase/auth';
-import { auth } from '../services/firebase';
+} from '../services/firebase';
+
+type MinimalUser = { uid: string } | null;
 
 type AuthContextType = {
-  user: User;
+  user: MinimalUser;
   loading: boolean;
   signInAnonymously: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -22,23 +22,36 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<MinimalUser>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    // If Firebase isn't configured, skip subscribing
+    if (!auth || !onAuthStateChanged) {
+      setLoading(false);
+      return;
+    }
+    const unsub = onAuthStateChanged(auth, (u: any) => {
+      // Store only minimal shape to avoid importing firebase types
+      setUser(u ? { uid: u.uid } : null);
       setLoading(false);
     });
-    return unsub;
+    return () => unsub && unsub();
   }, []);
 
+  // Stub: keep app running without pulling in 'firebase/auth'
+  // When you’re ready, export signInAnonymously from your firebase wrapper and call it here.
   const signInAnonymously = async () => {
-    await fbSignInAnonymously(auth);
+    if (!auth) return; // not configured yet
+    // TODO: add `signInAnonymously` export in services/firebase and call it here.
+    // For now, this is a no-op to avoid Snack dependency errors.
+    return;
   };
 
   const signOut = async () => {
+    if (!auth || !fbSignOut) return; // not configured
     await fbSignOut(auth);
+    setUser(null);
   };
 
   return (
@@ -49,3 +62,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 export const useAuth = () => useContext(AuthContext);
+
