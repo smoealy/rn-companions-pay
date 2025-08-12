@@ -1,8 +1,8 @@
-// src/services/firebase.ts — Firebase v8 compat wrapper for Snack/Expo
+// src/services/firebase.ts — Firebase v8 wrapper for Snack/Expo
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
 // Read config from Expo env (safe if left empty — wrapper will no-op)
 const cfg = {
@@ -44,7 +44,7 @@ export { firebaseApp, auth, db };
 
 /** ---- Re-exports & shims so app never imports firebase/* directly ---- */
 
-// Auth
+// Auth helpers
 export const onAuthStateChanged = (
   a: firebase.auth.Auth | undefined,
   cb: (user: firebase.User | null) => void
