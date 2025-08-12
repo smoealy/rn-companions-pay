@@ -1,29 +1,37 @@
-/**
- * Dispatcher that selects the real or stub Firebase implementation
- * based on EXPO_PUBLIC_USE_FIREBASE environment variable.
- */
+// src/services/firebase.ts
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 
-type FirebaseModule = typeof import('./firebase.real');
+// Read config from Expo public env (set in app.json -> expo.extra or EAS env)
+const cfg = {
+  apiKey: process.env.EXPO_PUBLIC_FB_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FB_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FB_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FB_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FB_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FB_APP_ID,
+};
 
-const firebase: FirebaseModule =
-  process.env.EXPO_PUBLIC_USE_FIREBASE === 'true'
-    ? require('./firebase.real')
-    : require('./firebase.stub');
+export const isFirebaseConfigured = Object.values(cfg).every(
+  (v) => typeof v === 'string' && v.length > 0
+);
 
-export const isFirebaseConfigured = firebase.isFirebaseConfigured;
-export const firebaseApp = firebase.firebaseApp;
-export const auth = firebase.auth;
-export const db = firebase.db;
-export const onAuthStateChanged = firebase.onAuthStateChanged;
-export const signInWithEmailAndPassword = firebase.signInWithEmailAndPassword;
-export const signInAnonymously = firebase.signInAnonymously;
-export const signOut = firebase.signOut;
-export const collection = firebase.collection;
-export const doc = firebase.doc;
-export const addDoc = firebase.addDoc;
-export const setDoc = firebase.setDoc;
-export const getDoc = firebase.getDoc;
-export const updateDoc = firebase.updateDoc;
-export const deleteDoc = firebase.deleteDoc;
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
 
-export default firebase;
+try {
+  if (isFirebaseConfigured) {
+    app = getApps()[0] ?? initializeApp(cfg as any);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  }
+} catch (e) {
+  console.warn('Firebase init failed:', e);
+  app = undefined;
+  auth = undefined;
+  db = undefined;
+}
+
+export { app as firebaseApp, auth, db };
