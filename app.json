@@ -6,23 +6,15 @@
     "orientation": "portrait",
     "scheme": "companionspay",
     "icon": null,
-    "jsEngine": "jsc",
-    "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "splash": { "resizeMode": "contain", "backgroundColor": "#ffffff" },
     "assetBundlePatterns": ["**/*"],
     "android": { "package": "com.companions.pay" },
-    "ios": { "bundleIdentifier": "com.companions.pay" },
+    "ios": {
+      "bundleIdentifier": "com.companions.pay",
+      "jsEngine": "jsc"
+    },
     "extra": {
-      "EXPO_PUBLIC_FB_API_KEY": "",
-      "EXPO_PUBLIC_FB_AUTH_DOMAIN": "",
-      "EXPO_PUBLIC_FB_PROJECT_ID": "",
-      "EXPO_PUBLIC_FB_STORAGE_BUCKET": "",
-      "EXPO_PUBLIC_FB_MESSAGING_SENDER_ID": "",
-      "EXPO_PUBLIC_FB_APP_ID": "",
-      "EXPO_PUBLIC_USE_FIREBASE": "false",
-      "EXPO_PUBLIC_USE_NATIVE_SCREENS": "false"
+      "EXPO_PUBLIC_FB_ENABLED": "0"
     }
   }
 }
