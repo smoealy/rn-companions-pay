@@ -1,3 +1,4 @@
+
 // src/services/firebase.ts — Firebase v9 modular setup (no Snack compat)
 
 import { initializeApp, type FirebaseApp } from 'firebase/app';
@@ -24,6 +25,12 @@ import {
   type DocumentData,
   type SetOptions,
 } from 'firebase/firestore';
+// src/services/firebase.ts — Firebase v8 wrapper for Snack/Expo
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
 
 // Read config from Expo env (safe if left empty — wrapper will no-op)
 const cfg = {
@@ -61,7 +68,7 @@ export { firebaseApp, auth, db };
 
 /** ---- Re-exports so app never imports firebase/* directly ---- */
 
-// Auth
+// Auth helpers
 export const onAuthStateChanged = (
   a: Auth | undefined,
   cb: (user: any) => void
