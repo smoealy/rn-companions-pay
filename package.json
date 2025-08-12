@@ -33,10 +33,13 @@
     "typescript": "^5.5.0"
   },
   "overrides": {
-    "metro": "0.83.3",
-    "metro-config": "0.83.3",
-    "metro-core": "0.83.3",
-    "metro-runtime": "0.83.3"
+    "metro": "0.83.1",
+    "metro-config": "0.83.1",
+    "metro-core": "0.83.1",
+    "metro-runtime": "0.83.1",
+
+    "react-native": "0.76.6",
+    "@react-native/virtualized-lists": "0.76.6"
   }
 }
 
