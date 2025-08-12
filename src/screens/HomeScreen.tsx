@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Flags } from '../services/Flags';
 import { AppStackParamList } from '../types';
 
-type HomeScreenProps = { navigation: NativeStackNavigationProp<AppStackParamList, 'Home'> };
+type HomeScreenProps = { navigation: StackNavigationProp<AppStackParamList, 'Home'> };
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [web3, setWeb3] = useState(false);
@@ -37,8 +37,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container:{ flex:1, padding:20, gap:12 },
-  title:{ fontSize:24, fontWeight:'700', marginBottom:10 },
+  container: { flex: 1, padding: 20, gap: 12 },
+  title: { fontSize: 24, fontWeight: '700', marginBottom: 10 },
 });
 
 export default HomeScreen;
