@@ -1,8 +1,14 @@
 // src/services/firebase.ts
 
-// Import from the single firebase SDK package installed in package.json
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInAnonymously,
+  signOut,
+  type Auth,
+} from 'firebase/auth';
 import {
   getFirestore,
   collection,
@@ -11,10 +17,11 @@ import {
   setDoc,
   getDoc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  type Firestore,
 } from 'firebase/firestore';
 
-// Read config from Expo public env (set in app.json -> expo.extra or EAS env)
+// Read config from Expo public env (set in app.json -> expo.extra or via EAS env)
 const cfg = {
   apiKey: process.env.EXPO_PUBLIC_FB_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FB_AUTH_DOMAIN,
@@ -26,12 +33,12 @@ const cfg = {
 
 // All keys must be non-empty strings to initialize
 export const isFirebaseConfigured = Object.values(cfg).every(
-  v => typeof v === 'string' && v.length > 0
+  (v) => typeof v === 'string' && v.length > 0
 );
 
-let firebaseApp: any;
-let auth: any;
-let db: any;
+let firebaseApp: ReturnType<typeof initializeApp> | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
 
 try {
   if (isFirebaseConfigured) {
@@ -39,7 +46,6 @@ try {
     auth = getAuth(firebaseApp);
     db = getFirestore(firebaseApp);
   } else {
-    // Leave undefined so callers can feature-detect and no-op
     firebaseApp = undefined;
     auth = undefined;
     db = undefined;
@@ -54,10 +60,11 @@ try {
 // Export initialized handles (may be undefined if not configured)
 export { firebaseApp, auth, db };
 
-// Re-export common helpers so other files don’t import firebase subpaths
+// Re-export common helpers so app code never imports firebase/* directly
 export {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInAnonymously,
   signOut,
   collection,
   addDoc,
