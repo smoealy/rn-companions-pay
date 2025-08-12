@@ -1,7 +1,13 @@
+// Ensure native modules are initialized even if Snack boots App.tsx directly
+import 'react-native-gesture-handler';
+import { enableScreens } from 'react-native-screens';
+enableScreens(true);
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+// Screens (use ./src/... paths)
 import HomeScreen from './src/screens/HomeScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import WalletScreen from './src/screens/WalletScreen';
@@ -20,6 +26,7 @@ import Web3TokenScreen from './src/screens/Web3TokenScreen';
 import Web3TransferScreen from './src/screens/Web3TransferScreen';
 import CardLoadScreen from './src/screens/CardLoadScreen';
 
+// Providers & types
 import { AppProvider } from './src/contexts/AppContext';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { AppStackParamList } from './src/types';
@@ -31,9 +38,9 @@ const App: React.FC = () => {
     <AppProvider>
       <AuthProvider>
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName="Home" screenOptions={{ headerTitle: 'Companions Pay' }}>
             <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Dashboard" component={DashboardScreen} />
+            <Stack.Screen name="Dashboard" component={DashboardScreen} />
             <Stack.Screen name="Wallet" component={WalletScreen} />
             <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
             <Stack.Screen name="Card" component={CardScreen} />
