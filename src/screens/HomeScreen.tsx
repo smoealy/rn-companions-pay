@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppStackParamList } from '../types';
 
@@ -12,7 +12,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [navigation]);
 
   // Empty placeholder while redirecting
-  return <View />;
+  return <SafeAreaView />;
 };
 
 export default HomeScreen;

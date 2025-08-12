@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp } from '../contexts/AppContext';
 
 const CardLoadScreen: React.FC = () => {
@@ -17,7 +18,7 @@ const CardLoadScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Load Companions Card</Text>
       <TextInput
         placeholder="Amount (PKR)"
@@ -27,7 +28,7 @@ const CardLoadScreen: React.FC = () => {
         style={styles.input}
       />
       <Button title="Load" onPress={handleLoad} />
-    </View>
+    </SafeAreaView>
   );
 };
 

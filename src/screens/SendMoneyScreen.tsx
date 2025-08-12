@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { WalletService, Currency } from '../services/WalletService';
 
@@ -18,7 +19,7 @@ const SendMoneyScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Send to Family</Text>
       <TextInput value={recipient} onChangeText={setRecipient} style={styles.input} placeholder="Recipient mobile" />
       <TextInput value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.input} placeholder="Amount" />
@@ -27,7 +28,7 @@ const SendMoneyScreen: React.FC = () => {
         <Picker.Item label="AED" value="AED" /><Picker.Item label="USD" value="USD" />
       </Picker>
       <Button title="Send" onPress={handleSend} />
-    </View>
+    </SafeAreaView>
   );
 };
 

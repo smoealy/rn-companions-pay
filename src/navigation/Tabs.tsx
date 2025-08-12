@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import WalletScreen from '../screens/WalletScreen';
@@ -14,7 +15,8 @@ const Tab = createBottomTabNavigator();
 
 const Tabs: React.FC = () => {
   return (
-    <Tab.Navigator
+    <SafeAreaView style={{ flex: 1 }}>
+      <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#0E6B5B',
@@ -42,6 +44,7 @@ const Tabs: React.FC = () => {
       <Tab.Screen name="Card" component={CardScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
+    </SafeAreaView>
   );
 };
 

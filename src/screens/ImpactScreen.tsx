@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Card from '../components/Card';
 import { PointsService } from '../services/PointsService';
 import { theme } from '../theme';
@@ -28,7 +29,7 @@ const ImpactScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Make an Impact</Text>
       <Text style={styles.points}>Ihram Points: {points}</Text>
 
@@ -44,7 +45,7 @@ const ImpactScreen: React.FC = () => {
           </Card>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

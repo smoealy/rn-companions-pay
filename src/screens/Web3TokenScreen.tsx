@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Web3 } from '../services/web3';
 
 const Web3TokenScreen: React.FC = () => {
@@ -18,12 +19,12 @@ const Web3TokenScreen: React.FC = () => {
   useEffect(() => { load(); }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>On-chain Token</Text>
       <Text>Wallet: {addr}</Text>
       <Text>Balance: {balance} {symbol}</Text>
       <Button title="Refresh" onPress={load} />
-    </View>
+    </SafeAreaView>
   );
 };
 

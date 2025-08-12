@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Zindigi } from '../services/zindigi';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -52,7 +53,7 @@ const WalletScreen: React.FC = () => {
   const convertDisabled = !amount || isNaN(amt) || amt <= 0 || loading;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Multi-Currency Wallet</Text>
       <Button title={loading ? 'Refreshing…' : 'Refresh Balances'} disabled={loading} onPress={loadBalances} />
 
@@ -83,7 +84,7 @@ const WalletScreen: React.FC = () => {
       <Button title="Preview FX Quote" onPress={preview} />
       {!!quote && <Text>{quote}</Text>}
       <Button title="Convert" onPress={handleConvert} disabled={convertDisabled} />
-    </View>
+    </SafeAreaView>
   );
 };
 

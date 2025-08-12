@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { TransactionService, TxItem } from '../services/TransactionService';
 
 const label: Record<TxItem['kind'], string> = {
@@ -48,7 +49,7 @@ const TransactionHistoryScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Transactions</Text>
       <Button title="Refresh" onPress={load} />
       <FlatList
@@ -58,7 +59,7 @@ const TransactionHistoryScreen: React.FC = () => {
         renderItem={render}
       />
       <Button title="Clear (dev)" onPress={clear} />
-    </View>
+    </SafeAreaView>
   );
 };
 

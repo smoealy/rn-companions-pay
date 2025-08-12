@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp } from '../contexts/AppContext';
 
 const HajjGoalsScreen: React.FC = () => {
@@ -20,7 +21,7 @@ const HajjGoalsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Hajj Savings Goals</Text>
       <FlatList
         data={hajjGoals}
@@ -56,7 +57,7 @@ const HajjGoalsScreen: React.FC = () => {
         style={styles.input}
       />
       <Button title="Add Goal" onPress={handleAddGoal} />
-    </View>
+    </SafeAreaView>
   );
 };
 
