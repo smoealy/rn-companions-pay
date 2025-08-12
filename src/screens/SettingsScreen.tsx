@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { Flags } from '../services/Flags';
 import { TransactionService } from '../services/TransactionService';
-import { Flags } from '../services/Flags';
 import { HajjService } from '../services/HajjService';
 
 const SettingsScreen: React.FC = () => {
