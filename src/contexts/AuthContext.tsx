@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-type User = { uid: string; email?: string | null } | null;
+import {
+  onAuthStateChanged,
+  signInAnonymously as fbSignInAnonymously,
+  signOut as fbSignOut,
+  User,
+} from 'firebase/auth';
+import { auth } from '../services/firebase';
 
 type AuthContextType = {
   user: User;
@@ -17,17 +22,24 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Stubbed: replace with Firebase onAuthStateChanged later
   useEffect(() => {
-    const t = setTimeout(() => { setUser({ uid: 'dev-user' }); setLoading(false); }, 300);
-    return () => clearTimeout(t);
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
+    return unsub;
   }, []);
 
-  const signInAnonymously = async () => setUser({ uid: 'dev-user' });
-  const signOut = async () => setUser(null);
+  const signInAnonymously = async () => {
+    await fbSignInAnonymously(auth);
+  };
+
+  const signOut = async () => {
+    await fbSignOut(auth);
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, signInAnonymously, signOut }}>
