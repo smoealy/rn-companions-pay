@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WalletService, Balances } from '../services/WalletService';
 import { TransactionService, TxItem } from '../services/TransactionService';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -24,7 +25,7 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => { load(); }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Dashboard</Text>
       <Button title="Refresh" onPress={load} />
 
@@ -55,7 +56,7 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
         />
         <Button title="View All" onPress={() => navigation.navigate('TransactionHistory')} />
       </Card>
-    </View>
+    </SafeAreaView>
   );
 };
 

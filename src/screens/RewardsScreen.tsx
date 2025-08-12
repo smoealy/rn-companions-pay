@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp } from '../contexts/AppContext';
 
 interface RewardOption {
@@ -26,7 +27,7 @@ const RewardsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Loyalty & Rewards</Text>
       <Text style={styles.points}>Ihram Points: {loyaltyPoints}</Text>
       <FlatList
@@ -39,7 +40,7 @@ const RewardsScreen: React.FC = () => {
           </View>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

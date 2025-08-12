@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Zindigi, ZCard } from '../services/zindigi';
 
 interface Txn { id: string; description: string; amount: number; currency: string; }
@@ -22,7 +23,7 @@ const CardScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Companions × Zindigi Card</Text>
       {card && (
         <View style={styles.cardBox}>
@@ -43,7 +44,7 @@ const CardScreen: React.FC = () => {
           </View>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

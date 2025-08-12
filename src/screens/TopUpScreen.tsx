@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WalletService } from '../services/WalletService';
 
 const TopUpScreen: React.FC = () => {
@@ -11,11 +12,11 @@ const TopUpScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Top Up (PKR)</Text>
       <TextInput value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.input} placeholder="Amount" />
       <Button title="Top Up" onPress={handleTopUp} />
-    </View>
+    </SafeAreaView>
   );
 };
 

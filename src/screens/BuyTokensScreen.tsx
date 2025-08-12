@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppStackParamList } from '../types';
 
@@ -22,7 +23,7 @@ const BuyTokensScreen: React.FC<{ navigation: Nav }> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Buy Ihram Points</Text>
 
       <FlatList
@@ -41,7 +42,7 @@ const BuyTokensScreen: React.FC<{ navigation: Nav }> = ({ navigation }) => {
       />
 
       <Button title={`Continue ($${pkg.price})`} onPress={handleContinue} />
-    </View>
+    </SafeAreaView>
   );
 };
 

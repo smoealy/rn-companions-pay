@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Web3 } from '../services/web3';
 
 const Web3ConnectScreen: React.FC = () => {
@@ -18,7 +19,7 @@ const Web3ConnectScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Web3 Wallet</Text>
       {connected ? (
         <>
@@ -28,7 +29,7 @@ const Web3ConnectScreen: React.FC = () => {
       ) : (
         <Button title="Connect Wallet (stub)" onPress={connect} />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

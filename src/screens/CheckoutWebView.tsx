@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../types';
@@ -43,7 +44,7 @@ const CheckoutWebView: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <WebView
         ref={webref}
         originWhitelist={['*']}
@@ -52,7 +53,7 @@ const CheckoutWebView: React.FC<Props> = ({ route, navigation }) => {
         startInLoadingState
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

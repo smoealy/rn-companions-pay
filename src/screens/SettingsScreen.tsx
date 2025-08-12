@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flags } from '../services/Flags';
 import { TransactionService } from '../services/TransactionService';
 import { HajjService } from '../services/HajjService';
@@ -32,7 +33,7 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Settings</Text>
 
       <View style={styles.card}>
@@ -51,7 +52,7 @@ const SettingsScreen: React.FC = () => {
         <Text style={styles.label}>Development</Text>
         <Button title="Clear Local Data" onPress={resetData} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
