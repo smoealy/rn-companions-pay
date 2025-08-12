@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
-import { WalletService, Currency } from '../services/WalletService';
+import { WalletService } from '../services/WalletService';
+import type { Currency } from '../services/WalletService';
 
 const SendMoneyScreen: React.FC = () => {
   const [currency, setCurrency] = useState<Currency>('PKR');

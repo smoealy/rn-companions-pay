@@ -7,10 +7,11 @@ export const CHAINS = { ETH: 1, POLYGON: 137, BASE: 8453 };
 // type ChainId = 1 | 137 | 8453;
 // but some bundlers fail on `export type`, so we treat chainId as a number.
 
-const STATE = {
-  /** @type {null | { address: string; chainId: number; connected: boolean }} */
+type Wallet = { address: string; chainId: number; connected: boolean };
+type TokenInfo = { symbol: string; decimals: number; address?: string };
+
+const STATE: { wallet: Wallet | null; token: TokenInfo } = {
   wallet: null,
-  /** @type {{ symbol: string; decimals: number; address?: string }} */
   token: { symbol: 'IHRAM', decimals: 18 }
 };
 
@@ -19,8 +20,8 @@ export const Web3 = {
    * Connect to a wallet (stub)
    * @returns {Promise<{ address: string; chainId: number; connected: boolean }>}
    */
-  async connect() {
-    const w = {
+  async connect(): Promise<Wallet> {
+    const w: Wallet = {
       address: '0xDEMO000000000000000000000000000000000001',
       chainId: CHAINS.POLYGON,
       connected: true
@@ -38,24 +39,20 @@ export const Web3 = {
    * Get the current wallet
    * @returns {null | { address: string; chainId: number; connected: boolean }}
    */
-  wallet() {
-    return STATE.wallet;
-  },
+  wallet(): Wallet | null { return STATE.wallet; },
 
   /**
    * Get token metadata
    * @returns {Promise<{ symbol: string; decimals: number; address?: string }>}
    */
-  async tokenInfo() {
-    return STATE.token;
-  },
+  async tokenInfo(): Promise<TokenInfo> { return STATE.token; },
 
   /**
    * Get token balance (stub)
    * @param {string} [address]
    * @returns {Promise<string>}
    */
-  async balanceOf(address) {
+  async balanceOf(address?: string): Promise<string> {
     if (!STATE.wallet) return '0';
     // TODO: replace with real on-chain RPC
     return '123.456';
@@ -67,7 +64,7 @@ export const Web3 = {
    * @param {string} amount
    * @returns {Promise<{ hash: string }>}
    */
-  async transfer(to, amount) {
+  async transfer(to: string, amount: string): Promise<{ hash: string }> {
     if (!STATE.wallet) throw new Error('Wallet not connected');
     // TODO: sign & send transaction
     return { hash: '0xHASH_DEMO_' + Date.now().toString(16) };
