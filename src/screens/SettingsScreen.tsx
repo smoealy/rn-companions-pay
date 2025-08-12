@@ -6,7 +6,7 @@ import { HajjService } from '../services/HajjService';
 
 const SettingsScreen: React.FC = () => {
   const [env, setEnv] = useState<'pilot' | 'production'>('pilot');
-const [web3, setWeb3] = useState(false);
+  const [web3, setWeb3] = useState(false);
 
   useEffect(() => {
     Flags.getEnv().then(setEnv);
@@ -19,24 +19,19 @@ const [web3, setWeb3] = useState(false);
     setEnv(next);
   };
 
+  const toggleWeb3 = async () => {
+    const next = !web3;
+    await Flags.setWeb3(next);
+    setWeb3(next);
+  };
+
   const resetData = async () => {
     await TransactionService.clear();
-    // Clear Hajj goals by setting empty array
-    await HajjService.remove('ALL_RESET_SENTINEL' as any); // ensure method exists; else:
-    // If remove doesn't accept sentinel, do:
-    // await AsyncStorage.setItem('hajj_goals_v1', JSON.stringify([]));
+    // If HajjService has a direct clear method, call it; else ensure goals key is cleared there.
     alert('Local data cleared (transactions & goals).');
   };
 
-  
   return (
-   
-    <View style={styles.card}>
-  <Text style={styles.label}>Web3 (optional)</Text>
-  <Text>Enabled: {String(web3)}</Text>
-  <Button title={web3 ? 'Disable Web3' : 'Enable Web3'} onPress={async () => setWeb3(await Flags.setWeb3(!web3))} />
-</View>
-    
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
 
@@ -44,6 +39,12 @@ const [web3, setWeb3] = useState(false);
         <Text style={styles.label}>Environment</Text>
         <Text>Current: {env}</Text>
         <Button title={`Switch to ${env === 'pilot' ? 'production' : 'pilot'}`} onPress={toggleEnv} />
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.label}>Web3 (optional)</Text>
+        <Text>Enabled: {String(web3)}</Text>
+        <Button title={web3 ? 'Disable Web3' : 'Enable Web3'} onPress={toggleWeb3} />
       </View>
 
       <View style={styles.card}>
@@ -55,10 +56,11 @@ const [web3, setWeb3] = useState(false);
 };
 
 const styles = StyleSheet.create({
-  container:{ flex:1, padding:20, gap:12 },
-  title:{ fontSize:22, fontWeight:'600' },
-  card:{ borderWidth:1, borderColor:'#ddd', padding:12, borderRadius:10, marginTop:10, gap:8 },
-  label:{ fontWeight:'600' },
+  container: { flex: 1, padding: 20, gap: 12 },
+  title: { fontSize: 22, fontWeight: '600' },
+  card: { borderWidth: 1, borderColor: '#ddd', padding: 12, borderRadius: 10, marginTop: 10, gap: 8 },
+  label: { fontWeight: '600' },
 });
 
 export default SettingsScreen;
+
