@@ -5,7 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { WalletService, Currency, Balances } from '../services/WalletService';
+import { WalletService } from '../services/WalletService';
+import type { Currency, Balances } from '../services/WalletService';
 import { AppStackParamList } from '../types';
 
 const WalletScreen: React.FC = () => {

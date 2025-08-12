@@ -3,14 +3,20 @@ import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WalletService, Balances } from '../services/WalletService';
 import { TransactionService, TxItem } from '../services/TransactionService';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AppStackParamList } from '../types';
+import { TabParamList, AppStackParamList } from '../types';
 import Card from '../components/Card';
 import { theme } from '../theme';
 
-type Props = { navigation: StackNavigationProp<AppStackParamList, 'Dashboard'> };
+type NavProp = CompositeNavigationProp<
+  BottomTabNavigationProp<TabParamList, 'Dashboard'>,
+  StackNavigationProp<AppStackParamList>
+>;
 
-const DashboardScreen: React.FC<Props> = ({ navigation }) => {
+const DashboardScreen: React.FC = () => {
+  const navigation = useNavigation<NavProp>();
   const [balances, setBalances] = useState<Balances>({ PKR: 0, SAR: 0, AED: 0, USD: 0 });
   const [points, setPoints] = useState(0);
   const [tx, setTx] = useState<TxItem[]>([]);
