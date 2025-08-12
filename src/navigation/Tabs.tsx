@@ -11,7 +11,9 @@ import CardScreen from '../screens/CardScreen';
 import ImpactScreen from '../screens/ImpactScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
-const Tab = createBottomTabNavigator();
+import type { TabParamList } from '../types';
+
+const Tab = createBottomTabNavigator<TabParamList>();
 
 const Tabs: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -26,13 +28,13 @@ const Tabs: React.FC = () => {
           backgroundColor: '#FFFFFF',
           borderTopColor: '#E5E7EB',
           borderTopWidth: 1,
-          height: 56 + insets.bottom,          // include bottom inset
-          paddingBottom: Math.max(insets.bottom, 8), // avoid white strip
+          height: 56 + insets.bottom,
+          paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 8,
         },
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size }) => {
-          const map: Record<string, keyof typeof Ionicons.glyphMap> = {
+          const map: Record<keyof TabParamList, keyof typeof Ionicons.glyphMap> = {
             Dashboard: 'home',
             Wallet: 'wallet',
             Goals: 'flag',
@@ -41,11 +43,11 @@ const Tabs: React.FC = () => {
             Card: 'card',
             Settings: 'settings',
           };
-          const name = map[route.name] ?? 'ellipse';
+          const name = map[route.name as keyof TabParamList] ?? 'ellipse';
           return <Ionicons name={name} size={size} color={color} />;
         },
       })}
-      sceneContainerStyle={{ backgroundColor: '#F7F8FA' }} // match app bg
+      sceneContainerStyle={{ backgroundColor: '#F7F8FA' }}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Wallet" component={WalletScreen} />
