@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../types';
@@ -7,11 +7,11 @@ import { WalletService } from '../services/WalletService';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Checkout'>;
 
-// Very simple stub page hosted as a data URL; replace with your real checkout URL
+// Simple stub page; replace with your real hosted checkout URL when ready
 const makeHtml = (tokens: number, price: number) => `
 <!DOCTYPE html><html><body style="font-family:sans-serif">
   <h2>Checkout</h2>
-  <p>Buying ${tokens} credits for $${price} (stub)</p>
+  <p>Buying ${tokens} Ihram Points for $${price} (stub)</p>
   <button onclick="window.ReactNativeWebView.postMessage(JSON.stringify({ ok: true }))">
     Pay Now
   </button>
@@ -20,17 +20,26 @@ const makeHtml = (tokens: number, price: number) => `
 const CheckoutWebView: React.FC<Props> = ({ route, navigation }) => {
   const { tokens, price, creditPkr } = route.params;
   const webref = useRef<WebView>(null);
+  const [handled, setHandled] = useState(false); // prevent double handling
 
   const onMessage = async (e: any) => {
+    if (handled) return;
     try {
-      const data = JSON.parse(e.nativeEvent.data);
+      const data = JSON.parse(e?.nativeEvent?.data ?? '{}');
+
       if (data?.ok) {
-        // Success: credit PKR and add small points reward
+        setHandled(true);
+        // Success: credit PKR and add a small points reward
         await WalletService.topUpPKR(creditPkr);
         await WalletService.addPoints(Math.floor(price / 5));
-        navigation.replace('BuyTokens'); // go back to buy screen
+
+        Alert.alert('Success', `Purchased ${tokens} Ihram Points`);
+        navigation.replace('BuyTokens'); // back to buy screen
       }
-    } catch {}
+    } catch (err) {
+      console.warn('Checkout message parse failed:', err);
+      Alert.alert('Oops', 'We could not complete the checkout.');
+    }
   };
 
   return (
@@ -48,7 +57,7 @@ const CheckoutWebView: React.FC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container:{ flex:1 }
+  container: { flex: 1 }
 });
 
 export default CheckoutWebView;
