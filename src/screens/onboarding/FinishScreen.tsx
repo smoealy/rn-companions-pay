@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions } from '@react-navigation/native';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { db, doc, setDoc } from '../../services/firebase';
 
 type Props = { onFinish?: () => void } & Record<string, any>;
 
-const FinishScreen: React.FC<Props> = ({ onFinish }) => {
+const FinishScreen: React.FC<Props> = ({ navigation, onFinish }) => {
   const { profile } = useOnboarding();
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
@@ -28,6 +29,18 @@ const FinishScreen: React.FC<Props> = ({ onFinish }) => {
         await setDoc(userRef, profile, { merge: true });
         await setDoc(doc(userRef, 'goals', 'first'), goal, { merge: true });
       }
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Home',
+              state: { index: 0, routes: [{ name: 'Dashboard' }] },
+            },
+          ],
+        }),
+      );
 
       onFinish?.();
     } catch (e) {
