@@ -1,8 +1,36 @@
+
+// src/services/firebase.ts — Firebase v9 modular setup (no Snack compat)
+
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import {
+  getAuth,
+  onAuthStateChanged as fbOnAuthStateChanged,
+  signInWithEmailAndPassword as fbSignInWithEmailAndPassword,
+  signInAnonymously as fbSignInAnonymously,
+  signOut as fbSignOut,
+  type Auth,
+} from 'firebase/auth';
+import {
+  getFirestore,
+  collection as fbCollection,
+  doc as fbDoc,
+  addDoc as fbAddDoc,
+  setDoc as fbSetDoc,
+  getDoc as fbGetDoc,
+  updateDoc as fbUpdateDoc,
+  deleteDoc as fbDeleteDoc,
+  type Firestore,
+  type CollectionReference,
+  type DocumentReference,
+  type DocumentData,
+  type SetOptions,
+} from 'firebase/firestore';
 // src/services/firebase.ts — Firebase v8 wrapper for Snack/Expo
 
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+
 
 // Read config from Expo env (safe if left empty — wrapper will no-op)
 const cfg = {
@@ -18,22 +46,18 @@ export const isFirebaseConfigured = Object.values(cfg).every(
   (v) => typeof v === 'string' && v.length > 0
 );
 
-let firebaseApp: firebase.app.App | undefined;
-let auth: firebase.auth.Auth | undefined;
-let db: firebase.firestore.Firestore | undefined;
+let firebaseApp: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
 
 try {
   if (isFirebaseConfigured) {
-    firebaseApp = firebase.apps[0] ?? firebase.initializeApp(cfg);
-    auth = firebase.auth();
-    db = firebase.firestore();
-  } else {
-    firebaseApp = undefined;
-    auth = undefined;
-    db = undefined;
+    firebaseApp = initializeApp(cfg);
+    auth = getAuth(firebaseApp);
+    db = getFirestore(firebaseApp);
   }
 } catch (e) {
-  console.warn('Firebase init (v8) failed:', e);
+  console.warn('Firebase init failed:', e);
   firebaseApp = undefined;
   auth = undefined;
   db = undefined;
@@ -42,49 +66,55 @@ try {
 // Export initialized handles (may be undefined if not configured)
 export { firebaseApp, auth, db };
 
-/** ---- Re-exports & shims so app never imports firebase/* directly ---- */
+/** ---- Re-exports so app never imports firebase/* directly ---- */
 
 // Auth helpers
 export const onAuthStateChanged = (
-  a: firebase.auth.Auth | undefined,
-  cb: (user: firebase.User | null) => void
-) => (a ? a.onAuthStateChanged(cb) : () => {});
+  a: Auth | undefined,
+  cb: (user: any) => void
+) => (a ? fbOnAuthStateChanged(a, cb) : () => {});
 
 export const signInWithEmailAndPassword = async (
-  a: firebase.auth.Auth | undefined,
+  a: Auth | undefined,
   email: string,
   pass: string
-) => { if (a) await a.signInWithEmailAndPassword(email, pass); };
-
-export const signInAnonymously = async (a: firebase.auth.Auth | undefined) => {
-  if (a) await a.signInAnonymously();
+) => {
+  if (a) await fbSignInWithEmailAndPassword(a, email, pass);
 };
 
-export const signOut = async (a: firebase.auth.Auth | undefined) => {
-  if (a) await a.signOut();
+export const signInAnonymously = async (a: Auth | undefined) => {
+  if (a) await fbSignInAnonymously(a);
 };
 
-// Firestore “modular-like” helpers
-type ColRef = firebase.firestore.CollectionReference<firebase.firestore.DocumentData>;
-type DocRef = firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
-
-export const collection = (database: typeof db, path: string): ColRef => {
-  if (!database) throw new Error('Firestore not configured');
-  return database.collection(path);
+export const signOut = async (a: Auth | undefined) => {
+  if (a) await fbSignOut(a);
 };
 
-export const doc = (database: typeof db, path: string, id?: string): DocRef => {
-  if (!database) throw new Error('Firestore not configured');
-  return id ? database.collection(path).doc(id) : database.doc(path);
+// Firestore helpers
+type ColRef = CollectionReference<DocumentData>;
+type DocRef = DocumentReference<DocumentData>;
+
+export const collection = (root: Firestore | DocRef, path: string): ColRef => {
+  if (!root) throw new Error('Firestore not configured');
+  return fbCollection(root as any, path);
 };
 
-export const addDoc = async (col: ColRef, data: any) => col.add(data);
+export const doc = (
+  root: Firestore | DocRef | ColRef,
+  ...segments: string[]
+): DocRef => {
+  if (!root) throw new Error('Firestore not configured');
+  return fbDoc(root as any, ...segments);
+};
 
-export const setDoc = async (d: DocRef, data: any, opts?: { merge?: boolean }) =>
-  d.set(data, opts?.merge ? { merge: true } : undefined);
+export const addDoc = async (col: ColRef, data: any) => fbAddDoc(col, data);
 
-export const getDoc = async (d: DocRef) => d.get();
+export const setDoc = async (d: DocRef, data: any, opts?: SetOptions) =>
+  opts ? fbSetDoc(d, data, opts) : fbSetDoc(d, data);
 
-export const updateDoc = async (d: DocRef, data: any) => d.update(data);
+export const getDoc = async (d: DocRef) => fbGetDoc(d);
 
-export const deleteDoc = async (d: DocRef) => d.delete();
+export const updateDoc = async (d: DocRef, data: any) => fbUpdateDoc(d, data);
+
+export const deleteDoc = async (d: DocRef) => fbDeleteDoc(d);
+

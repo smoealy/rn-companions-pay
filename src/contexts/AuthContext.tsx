@@ -3,6 +3,7 @@ import {
   auth,
   onAuthStateChanged,
   signOut as fbSignOut,
+  signInAnonymously as fbSignInAnonymously,
 } from '../services/firebase';
 
 type MinimalUser = { uid: string } | null;
@@ -39,13 +40,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsub && unsub();
   }, []);
 
-  // Stub: keep app running without pulling in 'firebase/auth'
-  // When you’re ready, export signInAnonymously from your firebase wrapper and call it here.
   const signInAnonymously = async () => {
-    if (!auth) return; // not configured yet
-    // TODO: add `signInAnonymously` export in services/firebase and call it here.
-    // For now, this is a no-op to avoid Snack dependency errors.
-    return;
+    if (!auth || !fbSignInAnonymously) return; // not configured yet
+    await fbSignInAnonymously(auth);
   };
 
   const signOut = async () => {
