@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Zindigi } from '../services/zindigi';
 import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { WalletService, Currency, Balances } from '../services/WalletService';
+import { AppStackParamList } from '../types';
 
 const WalletScreen: React.FC = () => {
+  const navigation = useNavigation<StackNavigationProp<AppStackParamList>>();
   const [balances, setBalances] = useState<Balances>({ PKR:0, SAR:0, AED:0, USD:0 });
   const [fromCurrency, setFromCurrency] = useState<Currency>('PKR');
   const [toCurrency, setToCurrency] = useState<Currency>('SAR');
@@ -55,6 +59,8 @@ const WalletScreen: React.FC = () => {
       {(['PKR','SAR','AED','USD'] as Currency[]).map((c)=>(
         <Text key={c} style={styles.line}>{c}: {balances[c].toFixed(2)}</Text>
       ))}
+
+      <Button title="Send to Family" onPress={() => navigation.navigate('SendMoney')} />
 
       <View style={styles.row}>
         <Picker selectedValue={fromCurrency} onValueChange={onFrom} style={{ flex: 1 }}>
