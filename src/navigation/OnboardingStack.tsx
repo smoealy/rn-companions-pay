@@ -6,7 +6,6 @@ import ChooseJourneyScreen from '../screens/onboarding/ChooseJourneyScreen';
 import GoalBasicsScreen from '../screens/onboarding/GoalBasicsScreen';
 import InviteFamilyScreen from '../screens/onboarding/InviteFamilyScreen';
 import Web3ToggleScreen from '../screens/onboarding/Web3ToggleScreen';
-import FinishScreen from '../screens/onboarding/FinishScreen';
 import { OnboardingProvider } from '../contexts/OnboardingContext';
 
 export type OnboardingStackParamList = {
@@ -16,7 +15,6 @@ export type OnboardingStackParamList = {
   GoalBasics: undefined;
   InviteFamily: undefined;
   Web3Toggle: undefined;
-  Finish: undefined;
 };
 
 const Stack = createStackNavigator<OnboardingStackParamList>();
@@ -30,8 +28,6 @@ export const OnboardingStack: React.FC<{ onFinish: () => void }> = ({ onFinish }
       <Stack.Screen name="GoalBasics" component={GoalBasicsScreen} />
       <Stack.Screen name="InviteFamily" component={InviteFamilyScreen} />
       <Stack.Screen name="Web3Toggle" component={Web3ToggleScreen} />
-      <Stack.Screen name="Finish">
-        {(props) => <FinishScreen {...props} onFinish={onFinish} />}
       </Stack.Screen>
     </Stack.Navigator>
   </OnboardingProvider>
