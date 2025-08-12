@@ -5,7 +5,8 @@ enableScreens(true);
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// ✅ Use JS stack (not native stack) to avoid PlatformConstants error on device
+import { createStackNavigator } from '@react-navigation/stack';
 
 // Screens (use ./src/... paths)
 import HomeScreen from './src/screens/HomeScreen';
@@ -31,14 +32,17 @@ import { AppProvider } from './src/contexts/AppContext';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { AppStackParamList } from './src/types';
 
-const Stack = createNativeStackNavigator<AppStackParamList>();
+const Stack = createStackNavigator<AppStackParamList>();
 
 const App: React.FC = () => {
   return (
     <AppProvider>
       <AuthProvider>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Home" screenOptions={{ headerTitle: 'Companions Pay' }}>
+          <Stack.Navigator
+            initialRouteName="Home"
+            screenOptions={{ headerTitle: 'Companions Pay' }}
+          >
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Dashboard" component={DashboardScreen} />
             <Stack.Screen name="Wallet" component={WalletScreen} />
