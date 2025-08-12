@@ -2,13 +2,14 @@ import React, { useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 import { AppStackParamList } from '../types';
 import { WalletService } from '../services/WalletService';
 
-type Props = NativeStackScreenProps<AppStackParamList, 'Checkout'>;
+type Nav = StackNavigationProp<AppStackParamList, 'Checkout'>;
+type Rt  = RouteProp<AppStackParamList, 'Checkout'>;
 
-// Simple stub page; replace with your real hosted checkout URL when ready
 const makeHtml = (tokens: number, price: number) => `
 <!DOCTYPE html><html><body style="font-family:sans-serif">
   <h2>Checkout</h2>
@@ -18,24 +19,24 @@ const makeHtml = (tokens: number, price: number) => `
   </button>
 </body></html>`;
 
-const CheckoutWebView: React.FC<Props> = ({ route, navigation }) => {
+/**
+ * Full-screen checkout overlay shown above Tabs
+ */
+const CheckoutWebView: React.FC<{ navigation: Nav; route: Rt }> = ({ route, navigation }) => {
   const { tokens, price, creditPkr } = route.params;
   const webref = useRef<WebView>(null);
-  const [handled, setHandled] = useState(false); // prevent double handling
+  const [handled, setHandled] = useState(false); // guard against double-submit
 
   const onMessage = async (e: any) => {
     if (handled) return;
     try {
       const data = JSON.parse(e?.nativeEvent?.data ?? '{}');
-
       if (data?.ok) {
         setHandled(true);
-        // Success: credit PKR and add a small points reward
         await WalletService.topUpPKR(creditPkr);
         await WalletService.addPoints(Math.floor(price / 5));
-
         Alert.alert('Success', `Purchased ${tokens} Ihram Points`);
-        navigation.replace('BuyTokens'); // back to buy screen
+        navigation.replace('BuyTokens');
       }
     } catch (err) {
       console.warn('Checkout message parse failed:', err);
@@ -44,21 +45,25 @@ const CheckoutWebView: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <WebView
-        ref={webref}
-        originWhitelist={['*']}
-        source={{ html: makeHtml(tokens, price) }}
-        onMessage={onMessage}
-        startInLoadingState
-        renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
-      />
+    <SafeAreaView edges={['top']} style={styles.safe}>
+      <View style={styles.container}>
+        <WebView
+          ref={webref}
+          originWhitelist={['*']}
+          source={{ html: makeHtml(tokens, price) }}
+          onMessage={onMessage}
+          startInLoadingState
+          renderLoading={() => <ActivityIndicator style={styles.spinner} />}
+        />
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 }
+  safe: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1 },
+  spinner: { marginTop: 20 }
 });
 
 export default CheckoutWebView;
