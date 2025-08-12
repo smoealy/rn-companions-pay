@@ -5,6 +5,7 @@ enableScreens(true);
 
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -80,13 +81,15 @@ const RootNavigator: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <AppProvider>
-    <AuthProvider>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </AuthProvider>
-  </AppProvider>
+  <SafeAreaProvider>
+    <AppProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </AuthProvider>
+    </AppProvider>
+  </SafeAreaProvider>
 );
 
 export default App;

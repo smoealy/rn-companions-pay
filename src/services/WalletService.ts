@@ -1,6 +1,8 @@
 import { Zindigi, ZBalance, ZTransferRequest, Currency } from './zindigi';
 import { TransactionService } from './TransactionService';
 
+export type { Currency };
+
 export type Balances = Record<Currency, number>;
 
 function toMap(list: ZBalance[]): Balances {
