@@ -1,9 +1,21 @@
-import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firebase/firestore';
+// src/services/firebase.ts
 
-// Read from Expo public env (configure in app.json -> expo.extra or via EAS env)
-const firebaseConfig = {
+// Import from the single firebase SDK package installed in package.json
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc
+} from 'firebase/firestore';
+
+// Read config from Expo public env (set in app.json -> expo.extra or EAS env)
+const cfg = {
   apiKey: process.env.EXPO_PUBLIC_FB_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FB_AUTH_DOMAIN,
   projectId: process.env.EXPO_PUBLIC_FB_PROJECT_ID,
@@ -12,28 +24,46 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FB_APP_ID,
 };
 
-// Minimal validity check (all fields must be non-empty strings)
-const isValid = Object.values(firebaseConfig).every(v => typeof v === 'string' && v.length > 0);
+// All keys must be non-empty strings to initialize
+export const isFirebaseConfigured = Object.values(cfg).every(
+  v => typeof v === 'string' && v.length > 0
+);
 
-let app: FirebaseApp | undefined;
-let auth: Auth | undefined;
-let db: Firestore | undefined;
+let firebaseApp: any;
+let auth: any;
+let db: any;
 
 try {
-  if (isValid) {
-    app = getApps()[0] ?? initializeApp(firebaseConfig as any);
-    auth = getAuth(app);
-    db = getFirestore(app);
+  if (isFirebaseConfigured) {
+    firebaseApp = getApps()[0] ?? initializeApp(cfg as any);
+    auth = getAuth(firebaseApp);
+    db = getFirestore(firebaseApp);
   } else {
-    // not configured yet – keep undefined so callers can guard
-    app = undefined;
+    // Leave undefined so callers can feature-detect and no-op
+    firebaseApp = undefined;
+    auth = undefined;
+    db = undefined;
   }
 } catch (e) {
-  // If anything goes wrong during init, fail safe (don’t crash Expo Go/Snack)
   console.warn('Firebase init failed:', e);
-  app = undefined;
+  firebaseApp = undefined;
   auth = undefined;
   db = undefined;
 }
 
-export { app as firebaseApp, auth, db };
+// Export initialized handles (may be undefined if not configured)
+export { firebaseApp, auth, db };
+
+// Re-export common helpers so other files don’t import firebase subpaths
+export {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+};
