@@ -10,24 +10,24 @@
     "expo": "expo start"
   },
   "dependencies": {
-    "@expo/vector-icons": "^14.1.0",
-    "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-picker/picker": "2.9.0",
-    "@react-navigation/bottom-tabs": "^6.5.20",
-    "@react-navigation/native": "^6.1.6",
-    "@react-navigation/native-stack": "^6.9.12",
-    "@react-navigation/stack": "^6.3.20",
+    "react": "18.2.0",
     "expo": "~53.0.0",
     "expo-status-bar": "~2.2.3",
-    "firebase": "^10.14.1",
-    "@firebase/app": "0.10.13",
-    "@firebase/auth": "1.7.9",
-    "@firebase/firestore": "4.7.3",
-    "react": "18.2.0",
+
+    "@expo/vector-icons": "^14.1.0",
+
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/stack": "^6.3.20",
+    "@react-navigation/bottom-tabs": "^6.5.20",
+
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-picker/picker": "2.9.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.11.1",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+
+    "firebase": "10.12.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.23",
